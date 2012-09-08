@@ -1,4 +1,4 @@
-module Fined::Operators
+module Fynd::Operators
   def not(expr)
   end
 

@@ -1,4 +1,4 @@
-module Fined::Actions
+module Fynd::Actions
   # Delete files; true if removal succeeded.  If the removal failed,
   # an error message is issued.  Use of  this  action  automatically
   # turns on the '-depth' option.

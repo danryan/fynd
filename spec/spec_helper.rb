@@ -12,7 +12,7 @@ Spork.prefork do
   # require 'fakefs'
   require 'fileutils'
   
-  require 'fined'
+  require 'fynd'
   
   RSpec.configure do |config|
     config.before do

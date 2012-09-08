@@ -1,0 +1,3 @@
+module Fynd::Helpers
+
+end

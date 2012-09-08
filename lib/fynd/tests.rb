@@ -1,12 +1,25 @@
-module Fined::Tests
+require 'etc'
+
+module Fynd::Tests
+  # Numeric arguments can be specified as
+  # 
+  # +n     for greater than n,
+  # 
+  # -n     for less than n,
+  # 
+  # n      for exactly n.
+  
   # File was last accessed n minutes ago.
-  def amin(n) 
+  def amin(n)
   end
 
   # File was last accessed more recently than file was modified. If
   # file is a symbolic link and the -H option or the -L option is in
   # effect, the access time of the file it points to is always used.
-  def anewer(file)
+  def anewer(other)
+    files.select! do |file|
+      File.stat(file).atime > File.stat(other).atime
+    end
   end
 
   # File was last accessed n*24 hours ago. When find figures out
@@ -14,6 +27,27 @@ module Fined::Tests
   # fractional part is ignored, so to match -atime +1, a file has to
   # have been accessed at least two days ago.
   def atime(n)
+    match = n.match(/([-+]?)(\d+)/)
+    comparer, interval = match[1], match[2].to_i
+    time = Time.now    
+    
+    files.select! do |file|
+      atime = File.stat(file).atime
+      
+      case comparer
+      when '+'
+        # more than n days ago
+        atime < time - interval.days
+      when '-'
+        # less than n days ago
+        atime > time - interval.days
+      when ''
+        # exactly n days ago
+        atime <= time - (interval - 1).days && atime >= time - interval.days
+      else
+        raise ArgumentError, "argument must be n, +n, or -n"
+      end    
+    end
   end
 
   # File's status was last changed n minutes ago.
@@ -24,7 +58,10 @@ module Fined::Tests
   # fied. If file is a symbolic link and the -H option or the -L
   # option is in effect, the status-change time of the file it
   # points to is always used.
-  def cnewer(file)
+  def cnewer(other)
+    files.select! do |file|
+      File.stat(file).ctime > File.stat(other).ctime
+    end
   end
 
   # File's status was last changed n*24 hours ago. See the comments
@@ -35,22 +72,33 @@ module Fined::Tests
 
   # File is empty and is either a regular file or a directory.
   def empty
+    files.select! do |file|
+      File.stat(file).zero?
+    end
   end
 
   alias :empty? :empty
 
   # Always false.
   def false
+    # false
   end
 
   alias :false? :false
 
   # File's numeric group ID is n.
   def gid(n)
+    files.select! do |file|
+      File.stat(file).gid == n.to_i
+    end
   end
 
   # File belongs to group gname (numeric group ID allowed).
   def group(name)
+    files.select! do |file|
+      gid = File.stat(file).gid
+      Etc.getgrgid(gid).name == name
+    end
   end
 
   # Like -lname, but the match is case insensitive.  If the -L
@@ -67,15 +115,17 @@ module Fined::Tests
   # that you should quote patterns as a matter of course, otherwise
   # the shell will expand any wildcard characters in them.
   def iname(pattern)
-    collection.select! do |file|
+    files.select! do |file|
       file =~ /#{pattern}/i
-      # File.fnmatch(pattern, file, File::FNM_CASEFOLD)
     end
   end
 
   # File has inode number n. It is normally easier to use the
   # -samefile test instead.
   def inum(n)
+    files.select! do |file|
+      File.stat(file).ino == n.to_i
+    end
   end
 
   # Like -regex, but the match is case insensitive.
@@ -120,7 +170,7 @@ module Fined::Tests
   # to enclose the pattern in quotes in order to protect it from
   # expansion by the shell.
   def name(pattern)
-    collection.select! do |file|
+    files.select! do |file|
       file =~ /#{pattern}/
     end
   end
@@ -128,15 +178,33 @@ module Fined::Tests
   # File was modified more recently than file. If file is a sym-
   # bolic link and the -H option or the -L option is in effect, the
   # modification time of the file it points to is always used.
-  def newer(file)
+  def newer(other)
   end
 
   # No user corresponds to file's numeric user ID.
   def nouser
+    files.select! do |file|
+      uid = File.stat(file).uid
+      begin
+        Etc.getpwuid(uid)
+        false
+      rescue ArgumentError => e
+        true
+      end
+    end
   end
 
   # No group corresponds to file's numeric group ID.
   def nogroup
+    files.select! do |file|
+      gid = File.stat(file).gid
+      begin
+        Etc.getgrgid(gid)
+        false
+      rescue ArgumentError => e
+        true
+      end
+    end
   end
 
   # See -wholename. The predicate -path is also supported by HP-UX find.
@@ -186,7 +254,7 @@ module Fined::Tests
 
   # File refers to the same inode as name.  When -L is in effect,
   # this can include symbolic links.
-  def samefile(name)
+  def samefile(other)
   end
 
   # File uses n units of space. The following suffixes can be used:
@@ -231,10 +299,23 @@ module Fined::Tests
   # s   socket
   # D   door (Solaris)
   def type(c)
+    files.select! do |file|
+      case c.to_s
+      when 'f', 'file'
+        File.stat(file).file?
+      when 'd', 'dir', 'directory'
+        File.stat(file).directory?
+      else
+        false
+      end
+    end
   end
 
   # File's numeric user ID is n.
   def uid(n)
+    files.select! do |file|
+      File.stat(file).uid == n.to_i
+    end
   end
 
   # File was last accessed n days after its status was last changed.
@@ -243,6 +324,10 @@ module Fined::Tests
 
   # File is owned by user uname (numeric user ID allowed).
   def user(name)
+    files.select! do |file|
+      uid = File.stat(file).uid.to_i
+      Etc.getpwuid(uid).name == name
+    end
   end
 
   # File name matches shell pattern pattern. The metacharacters do

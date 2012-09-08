@@ -38,6 +38,10 @@ module Fynd
     # end
     
     def run
+      paths.each do |path|
+        # Shove all found files into the collection
+        @sieve.collection << Find.find(File.expand_path(path)).to_a
+      end
       sieve.run
       return sieve.files
     end

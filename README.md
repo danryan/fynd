@@ -2,6 +2,8 @@
 
 I found GNU find to be slow, so I made it slower by rewriting it in Ruby.
 
+Fynd is heavily inspired by the, uh... find command, I guess.
+
 ## Is it any good?
 
 [No.](http://news.ycombinator.com/item?id=3067434)
@@ -23,7 +25,7 @@ find("/var/log").iname("system").type(:file).files
 => ["/var/log/system.log", "/var/log/system.log.0.bz2", "/var/log/system.log.1.bz2", "/var/log/system.log.2.bz2", "/var/log/system.log.3.bz2", "/var/log/system.log.4.bz2", "/var/log/system.log.5.bz2", "/var/log/system.log.6.bz2", "/var/log/system.log.7.bz2"]
 ```
 
-You can keep pass the files to a block [if you're a bad enough dude](http://i.imgur.com/x37pI.jpg).
+You can even pass the files to a block.
 
 ```ruby
 require 'fynd'

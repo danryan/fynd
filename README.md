@@ -1,8 +1,6 @@
-# Fynd
+GNU find is too slow. Let's make it slower by rewriting it in Ruby.
 
-I found GNU find to be slow, so I made it slower by rewriting it in Ruby.
-
-Fynd is heavily inspired by the, uh... find command, I guess.
+Files in Fynd are lazy-loaded, much like ActiveRecord. Fynd expressions aren't called until you call `#files`. Fynd is heavily inspired by the, uh... find command, I guess. 
 
 ## Is it any good?
 

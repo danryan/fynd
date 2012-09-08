@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Fynd::VERSION
   gem.authors       = ["Dan Ryan"]
   gem.email         = ["scriptfu@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{I found GNU find to be slow, so I made it slower.}
+  gem.summary       = %q{A pure Ruby re-implementation of GNU find.}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)

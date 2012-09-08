@@ -1,6 +1,6 @@
 # Fynd
 
-I found GNU find to be slow, so I made it slower.
+I found GNU find to be slow, so I made it slower by rewriting it in Ruby.
 
 ## Is it any good?
 

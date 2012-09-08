@@ -19,17 +19,8 @@ module Fynd
       @sieve.conditions['operators'] = {}
       @sieve.conditions['tests'] = {}
       
-      # For every path...
-      paths.each do |path|
-        # Pull out all directories
-        # dirs = Dir.glob(File.expand_path(path)).select { |f| File.lstat(f).directory? }
-        # Shove all found files into the collection
-        # @sieve.collection << Dir.glob(File.expand_path(path))
-        @sieve.collection << Find.find(File.expand_path(path)).to_a
-      end
-      
       # Flatten it and strip out non-unique files
-      @sieve.collection.flatten!.uniq!
+      
     end
 
     # def find(*paths)
@@ -42,6 +33,7 @@ module Fynd
         # Shove all found files into the collection
         @sieve.collection << Find.find(File.expand_path(path)).to_a
       end
+      @sieve.collection.flatten!.uniq!
       sieve.run
       return sieve.files
     end

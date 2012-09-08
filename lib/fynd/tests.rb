@@ -18,7 +18,7 @@ module Fynd::Tests
   # effect, the access time of the file it points to is always used.
   def anewer(other)
     files.select! do |file|
-      File.stat(file).atime > File.stat(other).atime
+      File.lstat(file).atime > File.lstat(other).atime
     end
   end
 
@@ -32,7 +32,7 @@ module Fynd::Tests
     time = Time.now    
     
     files.select! do |file|
-      atime = File.stat(file).atime
+      atime = File.lstat(file).atime
       
       case comparer
       when '+'
@@ -60,7 +60,7 @@ module Fynd::Tests
   # points to is always used.
   def cnewer(other)
     files.select! do |file|
-      File.stat(file).ctime > File.stat(other).ctime
+      File.lstat(file).ctime > File.lstat(other).ctime
     end
   end
 
@@ -73,7 +73,7 @@ module Fynd::Tests
   # File is empty and is either a regular file or a directory.
   def empty
     files.select! do |file|
-      File.stat(file).zero?
+      File.lstat(file).zero?
     end
   end
 
@@ -89,14 +89,14 @@ module Fynd::Tests
   # File's numeric group ID is n.
   def gid(n)
     files.select! do |file|
-      File.stat(file).gid == n.to_i
+      File.lstat(file).gid == n.to_i
     end
   end
 
   # File belongs to group gname (numeric group ID allowed).
   def group(name)
     files.select! do |file|
-      gid = File.stat(file).gid
+      gid = File.lstat(file).gid
       Etc.getgrgid(gid).name == name
     end
   end
@@ -124,7 +124,7 @@ module Fynd::Tests
   # -samefile test instead.
   def inum(n)
     files.select! do |file|
-      File.stat(file).ino == n.to_i
+      File.lstat(file).ino == n.to_i
     end
   end
 
@@ -184,7 +184,7 @@ module Fynd::Tests
   # No user corresponds to file's numeric user ID.
   def nouser
     files.select! do |file|
-      uid = File.stat(file).uid
+      uid = File.lstat(file).uid
       begin
         Etc.getpwuid(uid)
         false
@@ -197,7 +197,7 @@ module Fynd::Tests
   # No group corresponds to file's numeric group ID.
   def nogroup
     files.select! do |file|
-      gid = File.stat(file).gid
+      gid = File.lstat(file).gid
       begin
         Etc.getgrgid(gid)
         false
@@ -302,9 +302,9 @@ module Fynd::Tests
     files.select! do |file|
       case c.to_s
       when 'f', 'file'
-        File.stat(file).file?
+        File.lstat(file).file?
       when 'd', 'dir', 'directory'
-        File.stat(file).directory?
+        File.lstat(file).directory?
       else
         false
       end
@@ -314,7 +314,7 @@ module Fynd::Tests
   # File's numeric user ID is n.
   def uid(n)
     files.select! do |file|
-      File.stat(file).uid == n.to_i
+      File.lstat(file).uid == n.to_i
     end
   end
 
@@ -325,7 +325,7 @@ module Fynd::Tests
   # File is owned by user uname (numeric user ID allowed).
   def user(name)
     files.select! do |file|
-      uid = File.stat(file).uid.to_i
+      uid = File.lstat(file).uid.to_i
       Etc.getpwuid(uid).name == name
     end
   end

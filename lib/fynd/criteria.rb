@@ -22,10 +22,10 @@ module Fynd
       # For every path...
       paths.each do |path|
         # Pull out all directories
-        # dirs = Dir.glob(File.expand_path(path)).select { |f| File.stat(f).directory? }
+        # dirs = Dir.glob(File.expand_path(path)).select { |f| File.lstat(f).directory? }
         # Shove all found files into the collection
         # @sieve.collection << Dir.glob(File.expand_path(path))
-        @sieve.collection << Find.find(path).to_a
+        @sieve.collection << Find.find(File.expand_path(path)).to_a
       end
       
       # Flatten it and strip out non-unique files

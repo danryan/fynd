@@ -1,6 +1,6 @@
 # Fynd
 
-I felt GNU find was too slow, so I made it slower.
+I found GNU find to be slow, so I made it slower.
 
 ## Is it any good?
 
@@ -25,7 +25,7 @@ find("/var/log").iname("system").type(:file).files
 
 You can keep pass the files to a block [if you're a bad enough dude](http://i.imgur.com/x37pI.jpg).
 
-```
+```ruby
 require 'fynd'
 include Fynd
 

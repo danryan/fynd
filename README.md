@@ -1,6 +1,6 @@
 # Fynd
 
-A pure-Ruby re-implementation of the `find` command. Because GNU find wasn't slow enough.
+I felt GNU find was too slow, so I made it slower.
 
 ## Is it any good?
 

@@ -7,11 +7,12 @@ module Fynd
   class Criteria
     extend Forwardable
 
-    attr_accessor :sieve
+    attr_accessor :sieve, :paths
     
     def_delegators :@sieve, :collection, :conditions
     
     def initialize(*paths)
+      @paths = paths
       @sieve = Sieve.new
       @sieve.collection = []      
       @sieve.conditions = {}
@@ -29,17 +30,15 @@ module Fynd
     # end
     
     def run
-      paths.each do |path|
-        # Shove all found files into the collection
-        @sieve.collection << Find.find(File.expand_path(path)).to_a
-      end
-      @sieve.collection.flatten!.uniq!
+      @sieve.collection = paths.map do |path|
+        Find.find(File.expand_path(path)).to_a
+      end.flatten.uniq
       sieve.run
       return sieve.files
     end
     
     def files
-      files = sieve.run
+      files = run
       
       if block_given?
         yield files
